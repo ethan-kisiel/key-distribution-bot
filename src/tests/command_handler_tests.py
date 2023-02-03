@@ -1,12 +1,12 @@
 import pytest
-from .. import  utils
+from distributerbot.utils.command_handler import auth_user
 
 
 def test_auth_user():
     # arrange
     
     # act
-    utils.auth_user()
+    auth_user()
 
     # assert
     

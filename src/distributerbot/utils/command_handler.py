@@ -1,5 +1,5 @@
 import asyncio
-from api.app import authed_users
+from distributerbot.api.app import authed_users
 
 async def auth_user(user_id: int) -> str:
     if  str(user_id) in authed_users:

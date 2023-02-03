@@ -1,12 +1,9 @@
 import discord
 
 from os import environ
-from bot import bot
-
+from distributerbot.api.bot import bot
 from json import load as load_json
-from sys import path as syspath
 
-syspath.append('../src/')
 import environment_vars
 
 CLIENT_SECRET = environ['CLIENT_SECRET']
