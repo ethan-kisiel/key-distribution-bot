@@ -1,7 +1,5 @@
-import asyncio
-from distributerbot.api.app import authed_users
 
-async def auth_user(user_id: int) -> str:
+async def auth_user(user_id: int, authed_users: list[str]) -> str:
     if  str(user_id) in authed_users:
         return f'User with id: {user_id} is already authenticated.'
 
