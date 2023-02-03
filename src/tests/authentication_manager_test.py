@@ -30,7 +30,6 @@ def test_remove_auth():
     assert(remove_existing_auth_result == True)
     assert(remove_nonexistent_auth_result == False)
 
-
-    
-## cleanup
-auth_manager.remove_auth_file()
+def test_remove_file():
+    ## cleanup
+    auth_manager.remove_auth_file()
