@@ -1,3 +1,8 @@
+'''
+This is the layer, which is called from the bot events,
+it performs validation and calls/directly interfaces with the
+functions in the service module
+'''
 
 async def auth_user(user_id: int, authed_users: list[str]) -> str:
     if  str(user_id) in authed_users:

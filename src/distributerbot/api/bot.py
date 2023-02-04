@@ -2,6 +2,9 @@ import asyncio
 import discord
 from discord.ext.commands import Bot
 
+from distributerbot.service.auth_manager import AuthorityManager
+from distributerbot.service.key_manager import KeyManager
+
 intents = discord.Intents.default()
 intents.members = True
 intents.guilds = True
@@ -9,7 +12,7 @@ intents.messages = True
 intents.guild_messages = True
 intents.message_content = True
 
-bot = Bot(command_prefix=['!','.'], intents=intents)
+bot = Bot(command_prefix=['!','/'], intents=intents)
 
 @bot.command()
 async def auth(ctx, user_id: int):
