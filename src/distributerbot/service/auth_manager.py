@@ -18,7 +18,10 @@ class AuthorityManager:
             # attempt to initialize array of authorized users
             # from file
             with open(self.__file_path, 'r') as authed_users:
-                self.__authed_users = authed_users.readlines()
+                self.__authed_users = [line.strip('\n') for line in authed_users.readlines()]
+                
+                for line in self.__authed_users:
+                    print(line)
                 
         except FileNotFoundError:
             # create file if it doens't exist
@@ -26,7 +29,7 @@ class AuthorityManager:
                 pass
 
         except Exception as e:
-            print('ERROR: Bad path')
+            print(f'ERROR: {e}')
             
     # member functions
     def has_auth(self, user_id: int):
@@ -68,8 +71,8 @@ class AuthorityManager:
         '''
         try:
             with open(self.__file_path, 'w') as auth_file:
-                for user_id in self.__authed_users:
-                    auth_file.write(user_id)
+                for item in self.__authed_users:
+                    auth_file.write(f'{item}\n')
             return True
 
         except:

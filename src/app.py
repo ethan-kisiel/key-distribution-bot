@@ -9,8 +9,6 @@ from json import load as load_json
 import environment_vars
 CLIENT_SECRET = environ['CLIENT_SECRET']
 
-auth_manager = AuthorityManager(auth_file='AUTHED_USERS.txt')
-
 def main():
     bot.run(CLIENT_SECRET)
 

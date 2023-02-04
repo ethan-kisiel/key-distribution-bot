@@ -1,9 +1,7 @@
 import asyncio
 import discord
 from discord.ext.commands import Bot
-
-from distributerbot.service.auth_manager import AuthorityManager
-from distributerbot.service.key_manager import KeyManager
+from discord.ui import View, Button
 
 intents = discord.Intents.default()
 intents.members = True
@@ -12,7 +10,18 @@ intents.messages = True
 intents.guild_messages = True
 intents.message_content = True
 
-bot = Bot(command_prefix=['!','/'], intents=intents)
+bot = Bot(command_prefix=['!','.'], intents=intents)
+from distributerbot.utils.command_handler import auth_user
+
+# slash commands
+
+@bot.event
+async def on_ready():
+    await bot.tree.sync()
+    
+@bot.tree.command(name='claim')
+async def claim(ctx):
+    return
 
 @bot.command()
 async def auth(ctx, user_id: int):
@@ -25,9 +34,22 @@ async def auth(ctx, user_id: int):
     list if it is valid and the sending user
     is authenticated.
     '''
-    if user_id == bot.application_id:
-        # CALL AUTHENTICATION FUNCTION
-        # ON CURRENT USER
-        pass
-    else:
-        pass
+    response = await auth_user(ctx=ctx, user_id=user_id)
+    
+    await ctx.reply(response, ephemeral=True)
+    
+
+async def button_callback(ctx):
+    print("Pressed")
+
+@bot.command()
+async def button(ctx):
+
+    view = View()
+    button = Button(label='button')
+    button.callback = button_callback
+    view.add_item(button)
+    
+    
+    await ctx.send(view=view)
+    
