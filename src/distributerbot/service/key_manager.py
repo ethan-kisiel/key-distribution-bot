@@ -46,19 +46,51 @@ class KeyObjectManager:
         load from file & populate
         '''
         self.__key_definitions = {}
+        
+    def create_key(self, key_type: str, display_name: str, description: str = ''):
+        '''
+        adds new definition to key definitions
+        '''
+        return
+    
+    def remove_key(self, key_type: str):
+        return
+
+    # MARK: Make this async
+    # MARK: Possibly run on seperate thread if client wishes
+    def sync_definitions(self):
+        # ONLY USE IN DEBUG
+        return
 
 class UserKeyManager:
     '''
-    This houses the functions for the 
+    This houses the functionality for which keys each user has claimed
     '''
     def __init__(self):
+        self.__used_keys = {}
+        
+    def sync_used_keys(self):
         return
 
 
 class RoleKeyManager:
+    '''
+    This houses the functions for
+    '''
     def __init__(self):
+        self.__role_keys = {}
+        
+    def add_role(self, role_name: str):
+        return
+    
+    def remove_role(self, role_name: str):
+        return
+    
+    def add_role_key(self, role_name: str, key_name: str):
         return
 
+    def sync_role_keys(self):
+        return
 
 class KeyManager:
     '''
@@ -72,6 +104,8 @@ class KeyManager:
     def give_key(self, user: User, key_type: str) -> str:
         return
 
-    def remove_key(self, user: User, key_type: str) -> str:
+    def remove_player_key(self, user: User, key_type: str) -> str:
+        '''
+        DANGER Keys should (almost never) be removed from player
+        '''
         return
-    
