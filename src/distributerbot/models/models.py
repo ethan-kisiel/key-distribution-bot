@@ -13,6 +13,8 @@ class UsedKey(Base):
     # key_value is the actual key.. should probably be encrypted
     key_value = Column("key_value", String, primary_key=True)
     key_type = Column("key_type", String)
+    key_description = Column("key_description", String)
+    key_name = Column("key_name", String)
     date_used = Column("date_used", String)
     
     user_id = Column(Integer, ForeignKey("user.user_id"))

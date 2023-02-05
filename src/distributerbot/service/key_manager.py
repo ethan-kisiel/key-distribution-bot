@@ -7,39 +7,33 @@ administrative use, ie
 adding new keys, changing which roles can access
 which keys, etc.
 
+## key type is used for the back end
+## should be lowercased, no spaces
+## this also becomes the txt file,
+## which will house the raw keys
 keys:
 {
-    
+    key_type: "<key_type>",
+    display_name: "<Display Name>",
+    description: "<optional description>"
 }
+
+## available keys are the keys that this
+## role is allowed to claim
 
 role_key_pairing:
 {
-    
+    role_name: "<discord role>",
+    available_keys: ["key_name", "key_name"]
 }
 
-user_redeemed_keys
-{"<user_id>": 
-    "used_keys": 
-        {
-            "key_itemization": {},
-            "key_itemization": 
-        }
-}
-using dictionary allows for O(1) search on whether or not
-user has key, for example:
-
-try:
-    used_keys['1']['multiplayer_test']
-    user has key
-except:
-    user doesn't have key yet
 '''
 
 from discord import User
 
 class KeyObjectManager:
     '''
-    This houses the functions for the key key itemizations
+    This manages the key object definitions
     '''
     def __init__(self):
         '''
@@ -64,18 +58,17 @@ class KeyObjectManager:
 
 class UserKeyManager:
     '''
-    This houses the functionality for which keys each user has claimed
+    This talks with the database manager to find which
+    keys the user has used.
     '''
     def __init__(self):
-        self.__used_keys = {}
-        
-    def sync_used_keys(self):
         return
 
 
 class RoleKeyManager:
     '''
-    This houses the functions for
+    This controls which roles have
+    access to which keys.
     '''
     def __init__(self):
         self.__role_keys = {}
