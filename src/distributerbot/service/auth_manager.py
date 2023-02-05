@@ -105,3 +105,7 @@ class AuthorityManager:
 
         except:
             return False
+        
+    def __repr__(self):
+        return f'filepath={self.__file_path}'
+    

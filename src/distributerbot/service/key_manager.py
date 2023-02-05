@@ -92,14 +92,12 @@ class RoleKeyManager:
     def sync_role_keys(self):
         return
 
-class KeyManager:
+class KeyManager(RoleKeyManager, UserKeyManager, KeyObjectManager):
     '''
     This is the manager for the ENTIRE Key system
     '''
     def __init__(self):
-        self.__key_object_manager = KeyObjectManager()
-        self.__user_key_manager = UserKeyManager()
-        self.__role_key_manager = RoleKeyManager()
+        pass
 
     def give_key(self, user: User, key_type: str) -> str:
         return
