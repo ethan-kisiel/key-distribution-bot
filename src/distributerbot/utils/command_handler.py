@@ -5,26 +5,59 @@ functions in the service module
 '''
 from discord.ext.commands import Context
 from distributerbot.service.auth_manager import AuthorityManager
-from distributerbot.api.bot import bot
 
-auth_manager = AuthorityManager(auth_file='authorized_users.txt')
+auth_manager = AuthorityManager(auth_file='authorized_users')
 
 async def auth_user(ctx: Context, user_id: int) -> str:
+    '''
+    ** If this is the initial authrization, use the
+    server's id as the user_id **
+    
+    Takes a message context and user_id of user to
+    authorize, returns status message and attempts
+    to authorize given user
+    '''
     caller_id = ctx.author.id
     
-    # flow for initial authoriazation using bot id
-    if user_id == bot.application_id:
+    # flow for initial authoriazation using server id
+    if user_id == ctx.guild.id:
         if auth_manager.give_auth(caller_id):
             # successful initial authorization
             return f"Success, {ctx.author.name}, you are now authorized."
-        else:
-            #unsuccessful initial auth
-            return f"Something went wrong"
+
+        #unsuccessful initial auth
+        return f"Something went wrong"
       
     # check if calling user can issue this command
     if auth_manager.has_auth(user_id=caller_id):
         if auth_manager.give_auth(user_id=user_id):
             return f"Success, user with id: {user_id} is now authorized"
+        
+        # something went wrong while authorizing user
         return f"There was an issue, while authorizing user with id: {user_id}"
 
+    # user issuing command lacks authorization
+    return f"Sorry, {ctx.author.name} it appears you're not authorized to issue that command."
+
+async def deauth_user(ctx: Context, user_id: int) -> str:
+    '''
+    Takes message context and user_id of user to
+    deauthorize, returns a status message after
+    attempting to deauthorize user.
+    '''
+    caller_id = ctx.author.id
+    
+    # check if calling user can issue this command
+    if auth_manager.has_auth(user_id=caller_id):
+        if auth_manager.has_auth(user_id=user_id):
+            if auth_manager.remove_auth(user_id=user_id):
+                return f"Success, user with id: {user_id} has been deauthorized."
+            
+            # something went wrong while deauthorizing user
+            return f"There was an issue deauthorizing user with id: {user_id}"
+        
+        # user doesn't appear in authorization list
+        return f"It appears that user isn't authorized."
+
+    # user issuing command lacks authorization
     return f"Sorry, {ctx.author.name} it appears you're not authorized to issue that command."

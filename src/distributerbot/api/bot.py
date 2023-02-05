@@ -38,18 +38,3 @@ async def auth(ctx, user_id: int):
     
     await ctx.reply(response, ephemeral=True)
     
-
-async def button_callback(ctx):
-    print("Pressed")
-
-@bot.command()
-async def button(ctx):
-
-    view = View()
-    button = Button(label='button')
-    button.callback = button_callback
-    view.add_item(button)
-    
-    
-    await ctx.send(view=view)
-    
