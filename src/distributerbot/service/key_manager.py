@@ -28,8 +28,11 @@ role_key_pairing:
 }
 
 '''
-
+import json
 from discord import User
+from distributerbot.utils.database_manager import DatabaseManager
+
+db_manager = DatabaseManager()
 
 class KeyObjectManager:
     '''
@@ -38,9 +41,30 @@ class KeyObjectManager:
     def __init__(self):
         '''
         load from file & populate
+        if json/key_objects.json does not exist,
+        create it else, try set key definitions == to
+        json
         '''
         self.__key_definitions = {}
         
+        try:
+            with open('json/key_objects.json', 'r') as json_key_objects:
+                try:
+                    self.__key_definitions = json.loads(json_key_objects)
+                    
+                except Exception as e:
+                    print(f'Error while loading json: {e}')
+                    
+        except FileNotFoundError:
+            # create file
+            with open('json/key_objects.json', 'r'):
+                pass
+
+        except Exception as e:
+            print('Error: {e}')
+        
+
+
     def create_key(self, key_type: str, display_name: str, description: str = ''):
         '''
         adds new definition to key definitions
@@ -56,6 +80,7 @@ class KeyObjectManager:
         # ONLY USE IN DEBUG
         return
 
+
 class UserKeyManager:
     '''
     This talks with the database manager to find which
@@ -63,6 +88,7 @@ class UserKeyManager:
     '''
     def __init__(self):
         return
+
 
 
 class RoleKeyManager:
@@ -85,14 +111,17 @@ class RoleKeyManager:
     def sync_role_keys(self):
         return
 
+
+
 class KeyManager(RoleKeyManager, UserKeyManager, KeyObjectManager):
     '''
     This is the manager for the ENTIRE Key system
     '''
     def __init__(self):
-        pass
+        return
 
     def give_key(self, user: User, key_type: str) -> str:
+        # call db and remove key from text file
         return
 
     def remove_player_key(self, user: User, key_type: str) -> str:

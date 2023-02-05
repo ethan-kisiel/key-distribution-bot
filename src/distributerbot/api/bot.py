@@ -11,7 +11,7 @@ intents.guild_messages = True
 intents.message_content = True
 
 bot = Bot(command_prefix=['!','.'], intents=intents)
-from distributerbot.utils.command_handler import auth_user
+from distribution_bot.utils.command_handler import auth_user
 
 # slash commands
 
