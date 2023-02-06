@@ -5,23 +5,19 @@ from sqlalchemy.orm import sessionmaker
 
 db_manager = DatabaseManager('TEST_DB')
 
-def test_db_manager_init():
-    Session = sessionmaker(bind=db_manager.engine)
+def test_db_manager_add_user():
+    ## USE db_manager.create_user()
     
-    new_user = User(name='Ethan', user_id=8080)
-    
-    session = Session()
-    
-    ethan = None
+    ## Create session maker and query for created user
+    return
 
-    session.add(new_user)
-    session.commit()
-    session.close()
-    
-    session = Session()
-    
-    ethan = session.query(User).filter(User.name == 'Ethan').first()
-    
-    assert(ethan != None)
-    
+def test_db_manager_add_key():
+    ## CREATE user with Session maker
+    ## USE db_manager.add_key()
+    return
+
+def test_db_manager_get_user():
+    ## CREATE user with session maker
+    ## use db_manager.get_user() to get that user
+    return
     

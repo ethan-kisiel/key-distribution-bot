@@ -19,9 +19,11 @@ from distributerbot.utils.command_handler import auth_user
 async def on_ready():
     await bot.tree.sync()
     
-@bot.tree.command(name='claim')
+
+@bot.tree.command(name="claim")
 async def claim(ctx):
-    return
+    await ctx.response.send_message('hello')
+
 
 @bot.command()
 async def auth(ctx, user_id: int):
@@ -37,4 +39,3 @@ async def auth(ctx, user_id: int):
     response = await auth_user(ctx=ctx, user_id=user_id)
     
     await ctx.reply(response, ephemeral=True)
-    
