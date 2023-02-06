@@ -6,6 +6,17 @@ functions in the service module
 from discord.ext.commands import Context
 from distributerbot.service.auth_manager import AuthorityManager
 
+
+'''
+     _         _   _                _          _   _             
+    / \  _   _| |_| |__   ___  _ __(_)______ _| |_(_) ___  _ __  
+   / _ \| | | | __| '_ \ / _ \| '__| |_  / _` | __| |/ _ \| '_ \ 
+  / ___ \ |_| | |_| | | | (_) | |  | |/ / (_| | |_| | (_) | | | |
+ /_/   \_\__,_|\__|_| |_|\___/|_|  |_/___\__,_|\__|_|\___/|_| |_|
+                                                                 
+'''
+
+
 auth_manager = AuthorityManager(auth_file='authorized_users')
 
 async def auth_user(ctx: Context, user_id: int) -> str:
@@ -39,6 +50,7 @@ async def auth_user(ctx: Context, user_id: int) -> str:
     # user issuing command lacks authorization
     return f"Sorry, {ctx.author.name} it appears you're not authorized to issue that command."
 
+
 async def deauth_user(ctx: Context, user_id: int) -> str:
     '''
     Takes message context and user_id of user to
@@ -61,3 +73,31 @@ async def deauth_user(ctx: Context, user_id: int) -> str:
 
     # user issuing command lacks authorization
     return f"Sorry, {ctx.author.name} it appears you're not authorized to issue that command."
+
+
+'''
+  _  __          __  __                                                   _   
+ | |/ /___ _   _|  \/  | __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_ 
+ | ' // _ \ | | | |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '_ ` _ \ / _ \ '_ \| __|
+ | . \  __/ |_| | |  | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_ 
+ |_|\_\___|\__, |_|  |_|\__,_|_| |_|\__,_|\__, |\___|_| |_| |_|\___|_| |_|\__|
+           |___/                          |___/                               
+'''
+
+
+
+
+
+
+
+
+
+
+'''
+  _  __          ____       _ _                      
+ | |/ /___ _   _|  _ \  ___| (_)_   _____ _ __ _   _ 
+ | ' // _ \ | | | | | |/ _ \ | \ \ / / _ \ '__| | | |
+ | . \  __/ |_| | |_| |  __/ | |\ V /  __/ |  | |_| |
+ |_|\_\___|\__, |____/ \___|_|_| \_/ \___|_|   \__, |
+           |___/                               |___/ 
+'''
