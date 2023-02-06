@@ -85,14 +85,6 @@ async def deauth_user(ctx: Context, user_id: int) -> str:
 '''
 
 
-
-
-
-
-
-
-
-
 '''
   _  __          ____       _ _                      
  | |/ /___ _   _|  _ \  ___| (_)_   _____ _ __ _   _ 

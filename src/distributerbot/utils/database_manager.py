@@ -20,51 +20,80 @@ class DatabaseManager:
         Base.metadata.create_all(self.engine)
         
         
-    async def get_user(self, user_id: int):
+    def get_user(self, user_id: int):
         with sessionmaker(self.engine)() as session:
-            user = await (session.query(User)
+            user = (session.query(User)
                     .filter(User.user_id == user_id).first())
 
         return user
 
- 
-    async def create_user(self, user_id: int, name: str):
+    def get_user_keys(self, user_id: int):
+        with sessionmaker(self.engine)() as session:
+            user = (session.query(User)
+                    .filter(User.user_id == user_id).first())
+            
+            try:
+                return user.used_keys
+            except Exception as e:
+                print(f'EXCEPTION RAISED: {e}')
+            
+            return []
+
+    def create_user(self, user_id: int, name: str):
         '''
         Takes a user id integer, name string, attempts to create
-        a user and return that user if successful
+        a user, returns status code 0 = success; 1 = failure creating
+        user, 2 = failure persisting user
         '''
-        user =  User(user_id, name)
+        try:
+            user =  User(user_id, name)
+        except:
+            return 1
+
         with sessionmaker(self.engine)() as session:
-            session.add(user)
-
             try:
-                await session.commit()
-            except:
-                print()
-                return None
+                session.add(user)
+                session.commit()
+            except Exception as e:
+                print(f'error: {e}')
+                return 2
 
-            return await session.query(User).get(user.user_id)
+            return 0
 
 
-    async def give_key(self, user: User, key_def: dict,key: str):
+    def give_key(self, owner_id: str, key_def: dict,key: str):
         '''
         Takes a user, key def dictionary(from the key manager)
-        Takes a key string, creates and returns a UsedKey database
-        object.
+        Takes a key string, creates and returns a status code
+        0 = success; 1 = failure creating key; 2 = failure
+        persisting key
         '''
         try:
             key = UsedKey(key, key_type=key_def['key_type'],
                           description=key_def['description'])
-            key.owner = user
-        except:
-            return None
+            
+        except Exception as e:
+            print(f'RAISED EXCEPTION: {e}')
+            return 1
 
         with sessionmaker(self.engine)() as session:
-            session.add(key)
+            key.owner = session.query(User).get(owner_id)
             try:
-                await session.commit()
+                session.add(key)
+                session.commit()
             except:
                 print('there was an issue saving the database')
-                return None
+                return 2
 
-        return key
+            return 0
+        
+        
+    def clear(self):
+        '''
+        DANGER DO NOT FOR ANY REASON hook this up
+        DEBUG ONLY!!!!
+        '''
+        with sessionmaker(self.engine)(autoflush=True) as session:
+            session.query(User).delete()
+            
+            session.commit()

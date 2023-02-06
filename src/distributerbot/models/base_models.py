@@ -13,7 +13,8 @@ class User(Base):
     user_id = Column(Integer)
     name = Column(String)
 
-    used_keys = relationship("UsedKey", back_populates="owner")
+    used_keys = relationship("UsedKey", back_populates="owner",
+                             cascade="all, delete-orphan")
     
     def __init__(self, user_id: int, name: str):
         self.id = str(uuid4())
