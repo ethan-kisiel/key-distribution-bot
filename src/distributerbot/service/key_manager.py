@@ -32,7 +32,7 @@ import json
 from discord import User
 from distributerbot.utils.database_manager import DatabaseManager
 
-db_manager = DatabaseManager()
+db_manager = DatabaseManager('user_keys')
 
 class KeyObjectManager:
     '''
