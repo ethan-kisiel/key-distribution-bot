@@ -1,7 +1,7 @@
 import asyncio
 import discord
 from discord.ext.commands import Bot
-from discord.ui import View, Button
+from discord.ui import View, Button, TextInput
 
 intents = discord.Intents.default()
 intents.members = True
@@ -12,6 +12,7 @@ intents.message_content = True
 
 bot = Bot(command_prefix=['!','.'], intents=intents)
 from distributerbot.utils.command_handler import auth_user
+from distributerbot.views.key_caim_view import Questionnaire
 
 # slash commands
 
@@ -22,7 +23,8 @@ async def on_ready():
 
 @bot.tree.command(name="claim")
 async def claim(ctx):
-    await ctx.response.send_message('hello')
+    modal = Questionnaire()
+    await ctx.response.send_modal(modal)
 
 
 @bot.command()
