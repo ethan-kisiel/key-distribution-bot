@@ -8,8 +8,10 @@ def db_manager():
 
 def test_create_user(db_manager):
     db_manager.clear()
+    
     status = db_manager.create_user(1, "test_user")
     assert status == 0
+    
     user = db_manager.get_user(1)
     assert user.user_id == 1
     assert user.name == "test_user"
@@ -17,6 +19,7 @@ def test_create_user(db_manager):
 def test_give_key(db_manager):
     db_manager.clear()
     db_manager.create_user(1, "test_user")
+    
     user = db_manager.get_user(1)
     key_def = {
         "key_type": "test_key",

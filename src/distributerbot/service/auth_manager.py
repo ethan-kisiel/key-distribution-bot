@@ -17,7 +17,7 @@ class AuthorityManager:
         path_to_auth_file = os.path.dirname(abs_path)
         path_to_auth_file += f'/{auth_file}.txt'
         
-        self.__file_path = path_to_auth_file
+        self.__file_path = f'{auth_file}.txt'
         
         try:
             # attempt to initialize array of authorized users

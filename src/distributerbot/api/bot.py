@@ -1,7 +1,7 @@
 import asyncio
 import discord
 from discord.ext.commands import Bot
-from discord.ui import View, Button, TextInput
+from discord.ui import View, Button, TextInput, Item
 
 intents = discord.Intents.default()
 intents.members = True
@@ -12,10 +12,9 @@ intents.message_content = True
 
 bot = Bot(command_prefix=['!','.'], intents=intents)
 from distributerbot.utils.command_handler import auth_user
-from distributerbot.views.key_caim_view import Questionnaire
+from distributerbot.views.key_caim_view import Questionnaire, CustomRoleSelect
 
 # slash commands
-
 @bot.event
 async def on_ready():
     await bot.tree.sync()
@@ -24,8 +23,8 @@ async def on_ready():
 @bot.tree.command(name="claim")
 async def claim(ctx):
     modal = Questionnaire()
+ 
     await ctx.response.send_modal(modal)
-
 
 @bot.command()
 async def auth(ctx, user_id: int):
@@ -41,3 +40,22 @@ async def auth(ctx, user_id: int):
     response = await auth_user(ctx=ctx, user_id=user_id)
     
     await ctx.reply(response, ephemeral=True)
+    
+    
+@bot.command()
+async def test_role_select(ctx):
+    
+    view = View()
+    role_select = CustomRoleSelect()
+    modal = Questionnaire()
+   
+    view.add_item(role_select)
+    
+    modal.add_item(role_select)
+    
+    await ctx.response.send_modal(modal)
+    
+    
+@bot.command()
+async def test_secret(ctx, message: str):
+    await ctx.send(f"/spoiler {message}")

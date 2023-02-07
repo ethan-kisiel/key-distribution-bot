@@ -5,8 +5,6 @@ from distributerbot.models.base_models import User, UsedKey, Base
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
-
-
 class DatabaseManager:
     '''
     This class handles all interaction with the database.
@@ -95,5 +93,5 @@ class DatabaseManager:
         '''
         with sessionmaker(self.engine)(autoflush=True) as session:
             session.query(User).delete()
-            
+
             session.commit()
