@@ -38,15 +38,8 @@ class AuthorityManager:
             
     # member functions
     def has_auth(self, user_id: int):
-        '''
-        returns true if given user_id
-        has authority
-        '''
-        if str(user_id) in self.__authed_users:
-            return True
-
-        return False
-
+        return str(user_id) in self.__authed_users
+    
     def give_auth(self, user_id: int) -> bool:
         '''
         attempts to give authority
