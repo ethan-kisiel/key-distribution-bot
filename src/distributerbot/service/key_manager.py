@@ -32,12 +32,12 @@ role_key_pairing:
 TODO: convert to use status values instead of True/False
 for functions that don't specifically call for boolean return
 value
-
 '''
+
 import json
 from os import remove
 from os.path import exists
-from discord import User
+from discord import User, Member
 from distributerbot.utils.database_manager import DatabaseManager
 
 class KeyObjectManager:
@@ -60,7 +60,9 @@ class KeyObjectManager:
         try:
             with open(self.__keydef_file, 'r') as json_key_objects:
                 try:
-                    self.__key_definitions = json.loads(json_key_objects)
+                    contents = json_key_objects.read()
+                    
+                    self.__key_definitions = json.loads(contents)
                     
                 except Exception as e:
                     print(f'Error while loading json: {e}')
@@ -96,7 +98,8 @@ class KeyObjectManager:
                 with open(keys_path, 'w') as _:
                     pass
     
-        except:
+        except Exception as e:
+            print(f'exception raised: {e}')
             return False
         
         return self.sync_definitions()
@@ -127,6 +130,23 @@ class KeyObjectManager:
         returns the strings of all available key types
         '''
         return self.__key_definitions.keys()
+    
+    def retrieve_key(self, key_type: str):
+        key = ''
+        try:
+            with open(f'{self.__keys_path}/{key_type}.txt', 'r+') as key_file:
+                file_lines = key_file.readlines()
+                # write all lines, excluding the first (0th) line
+                key = file_lines[0].strip('\n').strip()
+                
+                key_file.writelines(file_lines[1:])
+
+            return key
+
+        except:
+            print('Error while retrieving key from file')
+
+        return None
 
     def sync_definitions(self):
         '''
@@ -167,7 +187,9 @@ class RoleKeyManager:
         try:
             with open(self.__roledef_file, 'r') as json_roles_objects:
                 try:
-                    self.__role_keys = json.loads(json_roles_objects)
+                    contents = json_roles_objects.read()
+                    
+                    self.__role_keys = json.loads(contents)
 
                 except Exception as e:
                     print(f'Error while loading json: {e}')
@@ -179,7 +201,7 @@ class RoleKeyManager:
             print(f'Error: {e}')
 
     
-    def add_role(self, role_name: str, role_keys=[]):
+    def set_role(self, role_name: str, role_keys=[]):
         try:
             self.__role_keys[role_name] = role_keys
         except:
@@ -196,25 +218,24 @@ class RoleKeyManager:
             return False
         
         return self.sync_role_keys()
-    
 
-    def add_role_key(self, role_name: str, key_name: str):
+    def add_role_key(self, role_name: str, key_type: str):
         '''
         check whether the role exists, if not, create role
         add key to role
         '''
         try:
             if self.role_exists(role_name):
-                self.__role_keys[role_name].append(key_name)
+                self.__role_keys[role_name].append(key_type)
                 return self.sync_role_keys()
             else:
                 self.add_role(role_name)
-                return self.add_role_key(role_name, key_name)
+                return self.add_role_key(role_name, key_type)
         except:
             print('Something went wrong')
             return False
     
-    def remove_role_key(self, role_name: str, key_name: str):
+    def remove_role_key(self, role_name: str, key_type: str):
         '''
         Removes key from role and returns 0 if key is present in
         role, returns 1 if role doesn't exist,
@@ -223,8 +244,10 @@ class RoleKeyManager:
         if not self.role_exists(role_name):
             return 1
 
-        if key_name in self.__role_keys[role_name]:
-            self.__role_keys[role_name].remove(key_name)
+        if key_type in self.__role_keys[role_name]:
+            self.__role_keys[role_name].remove(key_type)
+            self.sync_role_keys()
+            
             return 0
 
         return 2
@@ -240,7 +263,13 @@ class RoleKeyManager:
 
     def role_exists(self, role_name: str):
         return role_name in self.get_roles()
-    
+
+    def role_contains_key(self, role_name: str, key_type: str):
+        try:
+            return key_type in self.__role_keys[role_name]
+        except:
+            return False
+
     def sync_role_keys(self):
         '''
         attempts to save the current key definitions dict
@@ -261,31 +290,78 @@ class RoleKeyManager:
     def clear_role_keys(self):
         self.__role_keys = {}
         
-'''
-class UserKeyManager:
 
-    This talks with the database manager to find which
-    keys the user has used.
-    as well as gives the user keys and
-    creates
-    
-    def __init__(self, database_name):
-        self.db_manager = DatabaseManager(database_name)
-        
-'''
 
 class KeyManager(RoleKeyManager, KeyObjectManager):
     '''
     This is the manager for the ENTIRE Key system
     '''
-    def __init__(self):
-        return
-    
-    def give_user_key():
-        '''
-        perform checks, to make sure the given user can
-        '''
-        return
+    def __init__(self, roledef_file: str, keydef_file: str, keys_folder: str, db_name: str):
+        RoleKeyManager.__init__(self, roledef_file)
+        KeyObjectManager.__init__(self, keydef_file, keys_folder)
+        self.db_manager = DatabaseManager(db_name)
 
-    def user_can_claim():
-        return
+    def get_user_available_keys(self, member: Member):
+        key_roles = self.get_roles()
+        user_roles = [role.name for role in member.roles if role in key_roles]
+        for role in user_roles:
+            if role in key_roles:
+                return self.get_role_keys(role)
+
+    def give_user_keys(self, user: User, keys=[]):
+        '''
+        tries to give user a list of keys
+        will give user keys if user doesn't already
+        have them.
+        '''
+        db_user =  self.db_manager.get_user(user.id)
+        
+        if db_user is None:
+            db_user = self.db_manager.create_user(user.id, user.name)
+
+        user_keys = self.db_manager.get_user_keys(user.id)
+        if not len(user_keys):
+            # limit user keys to just a list of key.key_type
+            user_keys = [key.key_type for key in user_keys]
+            # limit keys to only those which aren't in user_keys
+            keys = [key for key in keys if key not in user_keys]
+
+        for key in keys:
+            key_code = self.retrieve_key(key)
+            if key_code:
+                key_data = self.get_key_data(key)
+                oid = db_user.id
+                self.db_manager.give_key(oid, key_code, key, key_data)
+                
+
+        # step 1 limit the keys we try to create to just the ones
+        # that the user doesn't already have
+        # step 2 try to create a key with data from key obj man
+        # step 3 give the user the key
+        
+
+    
+    def delete_key(self, key_type: str):
+        '''
+        this function coordinates between the KeyObjectManager
+        and the RoleKeyManager, to make sure that the
+        RoleKeyManager doesn't contain nonexistent keys.
+        '''
+        try:
+            for role in self.get_roles():
+                if self.role_contains_key(role, key_type):
+                    self.remove_role_key(role, key_type)
+
+            return self.remove_key(key_type)
+        except:
+            return False
+        
+    def set_role_keys(self, role_name: str, keys=[]):
+        '''
+        this performs set role using only valid keys.
+        basically just validation.
+        '''
+        
+        valid_keys = [key for key in keys if self.key_exists(key)]
+        
+        return self.set_role(role_name, valid_keys)

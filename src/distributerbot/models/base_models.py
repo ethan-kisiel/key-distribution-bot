@@ -32,6 +32,7 @@ class UsedKey(Base):
     
     key_type = Column(String)
     key = Column(String)
+    display_name = Column(String)
     description = Column(String)
     
     used_date = Column(String)
@@ -39,7 +40,7 @@ class UsedKey(Base):
     owner_id = Column(Integer, ForeignKey('users.id'))
     owner = relationship("User", back_populates="used_keys")
     
-    def __init__(self, key: str, key_type: str, description: str=''):
+    def __init__(self, key: str, key_type: str, display_name: str, description: str=''):
         self.id = str(uuid4())
 
         self.used_date = (datetime.now()
@@ -47,6 +48,7 @@ class UsedKey(Base):
 
         self.key = key
         self.key_type = key_type
+        self.display_name = display_name
         self.description = description
 
     def __repr__(self):

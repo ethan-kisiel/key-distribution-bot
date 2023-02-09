@@ -11,12 +11,6 @@ class AuthorityManager:
         DO NOT add .txt when initializing this object
         '''
         self.__authed_users = []
-        
-        # get the file path to this directory
-        abs_path = os.path.abspath(__file__)
-        path_to_auth_file = os.path.dirname(abs_path)
-        path_to_auth_file += f'/{auth_file}.txt'
-        
         self.__file_path = f'{auth_file}.txt'
         
         try:

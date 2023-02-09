@@ -34,8 +34,8 @@ class DatabaseManager:
                 return user.used_keys
             except Exception as e:
                 print(f'EXCEPTION RAISED: {e}')
-            
-            return []
+
+        return []
 
     def create_user(self, user_id: int, name: str):
         '''
@@ -59,7 +59,7 @@ class DatabaseManager:
             return 0
 
 
-    def give_key(self, owner_id: str, key_def: dict,key: str):
+    def give_key(self, owner_id: str, key: str, key_type: str, key_def: dict):
         '''
         Takes a user, key def dictionary(from the key manager)
         Takes a key string, creates and returns a status code
@@ -67,8 +67,7 @@ class DatabaseManager:
         persisting key
         '''
         try:
-            key = UsedKey(key, key_type=key_def['key_type'],
-                          description=key_def['description'])
+            key = UsedKey(key,)
             
         except Exception as e:
             print(f'RAISED EXCEPTION: {e}')
@@ -84,8 +83,7 @@ class DatabaseManager:
                 return 2
 
             return 0
-        
-        
+
     def clear(self):
         '''
         DANGER DO NOT FOR ANY REASON hook this up
