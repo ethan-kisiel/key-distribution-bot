@@ -134,11 +134,12 @@ class KeyObjectManager:
     def retrieve_key(self, key_type: str):
         key = ''
         try:
-            with open(f'{self.__keys_path}/{key_type}.txt', 'r+') as key_file:
+            with open(f'{self.__keys_path}/{key_type}.txt', 'r') as key_file:
                 file_lines = key_file.readlines()
                 # write all lines, excluding the first (0th) line
                 key = file_lines[0].strip('\n').strip()
                 
+            with open(f'{self.__keys_path}/{key_type}.txt', 'w') as key_file:
                 key_file.writelines(file_lines[1:])
 
             return key
@@ -303,7 +304,8 @@ class KeyManager(RoleKeyManager, KeyObjectManager):
 
     def get_user_available_keys(self, member: Member):
         key_roles = self.get_roles()
-        user_roles = [role.name for role in member.roles if role in key_roles]
+        user_roles = [role.name for role in member.roles if role.name in key_roles]
+        
         for role in user_roles:
             if role in key_roles:
                 return self.get_role_keys(role)
@@ -317,23 +319,26 @@ class KeyManager(RoleKeyManager, KeyObjectManager):
         db_user =  self.db_manager.get_user(user.id)
         
         if db_user is None:
-            db_user = self.db_manager.create_user(user.id, user.name)
+            self.db_manager.create_user(user.id, user.name)
+            db_user = self.db_manager.get_user(user.id)
 
         user_keys = self.db_manager.get_user_keys(user.id)
-        if not len(user_keys):
+        if len(user_keys) > 0:
             # limit user keys to just a list of key.key_type
             user_keys = [key.key_type for key in user_keys]
+            print(user_keys)
             # limit keys to only those which aren't in user_keys
             keys = [key for key in keys if key not in user_keys]
-
+            
+        print(keys)
         for key in keys:
             key_code = self.retrieve_key(key)
             if key_code:
                 key_data = self.get_key_data(key)
                 oid = db_user.id
                 self.db_manager.give_key(oid, key_code, key, key_data)
-                
 
+        
         # step 1 limit the keys we try to create to just the ones
         # that the user doesn't already have
         # step 2 try to create a key with data from key obj man

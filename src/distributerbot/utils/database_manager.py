@@ -67,7 +67,10 @@ class DatabaseManager:
         persisting key
         '''
         try:
-            key = UsedKey(key,)
+            dn = key_def['display_name']
+            desc = key_def['description']
+            
+            key = UsedKey(key, key_type, dn, desc)
             
         except Exception as e:
             print(f'RAISED EXCEPTION: {e}')

@@ -24,6 +24,7 @@ async def on_ready():
     bot.tree.get_command('setkey').checks = [has_auth_check]
     bot.tree.get_command('removekey').checks = [has_auth_check]
     bot.tree.get_command('setrolekeys').checks = [has_auth_check]
+    
     await bot.tree.sync()
 
 @bot.command(hidden=True)
@@ -63,8 +64,7 @@ async def keys(interaction):
     return
 @bot.tree.command(name='claim')
 async def claim(interaction):
-    await ch.user_keys(interaction)
-
+    await ch.claim_keys(interaction)
 
 @bot.tree.command(name='setkey')
 async def setkey(interaction):

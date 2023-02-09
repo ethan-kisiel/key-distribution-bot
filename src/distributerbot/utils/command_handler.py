@@ -139,7 +139,7 @@ async def remove_role_key(interaction: Interaction, role_name: str, key_type: st
  |_|\_\___|\__, |____/ \___|_|_| \_/ \___|_|   \__, |
            |___/                               |___/ 
 '''
-async def user_keys(interaction: Interaction):
+async def get_user_keys(interaction: Interaction):
     user_id = interaction.user.id
     user_keys = key_manager.db_manager.get_user_keys(user_id)
     if not len(user_keys):
@@ -147,17 +147,30 @@ async def user_keys(interaction: Interaction):
     else:
         message = ''
         for key in user_keys:
-            message.append(f'{key.display_name}: {key.key}\n')
+            message += f'{key.display_name}: ||{key.key}||\n ```{key.description}```\n'
             
         await interaction.response.send_message(message, ephemeral=True)
     
 
-async def claim_keys(ctx: Context, user_id: int):
+async def claim_keys(interaction):
     '''
     check if the user has the appropriate role to claim keys
     check if the user has already claimed keys
     check which keys the user has not claimed
     
     '''
+    user_id = interaction.user.id
+    member = interaction.guild.get_member(user_id)
     
-    return
+    available_keys = key_manager.get_user_available_keys(member)
+
+    if available_keys:
+        key_manager.give_user_keys(interaction.user, available_keys)
+
+        await get_user_keys(interaction)
+    else:
+        user_keys = key_manager.db_manager.get_user_keys(user_id)
+        if len(user_keys) > 0:
+            await get_user_keys(interaction)
+        else:
+            await interaction.response.send_message('No keys available with your roles')
