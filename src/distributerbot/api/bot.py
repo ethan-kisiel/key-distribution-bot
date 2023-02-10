@@ -25,6 +25,8 @@ async def on_ready():
     bot.tree.get_command('removekey').checks = [has_auth_check]
     bot.tree.get_command('setrolekeys').checks = [has_auth_check]
     
+    # set handle errors
+    
     await bot.tree.sync()
 
 @bot.command(hidden=True)
@@ -92,6 +94,10 @@ async def removerole(interaction):
 async def has_auth_check(interaction: Interaction):
     has_auth = ch.auth_manager.has_auth(interaction.user.id)
     if not has_auth:
-        await interaction.response.send_message(NO_PERM)
+        await interaction.response.send_message(NO_PERM, ephemeral=True)
 
     return has_auth
+
+async def error_callback(interaction):
+    message = 'Something went wrong while processing your request'
+    await interaction.response.send_message(message, ephemeral=True)

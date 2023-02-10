@@ -19,9 +19,6 @@ class AuthorityManager:
             with open(self.__file_path, 'r') as authed_users:
                 self.__authed_users = [line.strip('\n') for line in authed_users.readlines()]
                 
-                for line in self.__authed_users:
-                    print(line)
-                
         except FileNotFoundError:
             # create file if it doens't exist
             with open(self.__file_path, 'w') as _:

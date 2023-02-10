@@ -108,16 +108,15 @@ async def set_role(interaction: Interaction, role_name: str, role_keys: str):
     '''
     try:
         role_keys = [line.strip() for line in role_keys.split('\n')]
+        set_role_status = key_manager.set_role_keys(role_name, role_keys)
+    
+        if set_role_status:
+            await interaction.response.send_message('Success', ephemeral=True)
+        else:
+            await interaction.response.send_message('Failed to save role', ephemeral=True)
+    
     except:
         await interaction.response.send_message('Failed to parse role keys', ephemeral=True)
-        return
-
-    set_role_status = key_manager.set_role_keys(role_name, role_keys)
-    
-    if set_role_status:
-        await interaction.response.send_message('Success', ephemeral=True)
-    else:
-        await interaction.response.send_message('Failed to save role', ephemeral=True)
 
 async def remove_role(interaction: Interaction, role_name: str):
     if key_manager.remove_role(role_name):
@@ -173,4 +172,4 @@ async def claim_keys(interaction):
         if len(user_keys) > 0:
             await get_user_keys(interaction)
         else:
-            await interaction.response.send_message('No keys available with your roles')
+            await interaction.response.send_message('No keys available with your roles', ephemeral=True)

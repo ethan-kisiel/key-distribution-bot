@@ -326,11 +326,10 @@ class KeyManager(RoleKeyManager, KeyObjectManager):
         if len(user_keys) > 0:
             # limit user keys to just a list of key.key_type
             user_keys = [key.key_type for key in user_keys]
-            print(user_keys)
+
             # limit keys to only those which aren't in user_keys
             keys = [key for key in keys if key not in user_keys]
-            
-        print(keys)
+
         for key in keys:
             key_code = self.retrieve_key(key)
             if key_code:
