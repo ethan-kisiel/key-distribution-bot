@@ -17,12 +17,12 @@ echo "environ['CLIENT_SECRET'] = '$client_secret'" >> $file_name
 # install python version
 
 # create virtual environment
-python3.9 -m venv env
+python3 -m venv env
 source env/bin/activate
 
 # install requirements.txt
 pip install -r requirements.txt
 
-
+sh startup.sh
 # remove this script after running
 # rm $0
