@@ -5,7 +5,7 @@ discord bot for ohd key distribution
 ## initial setup
 From the key-distribution-bot director, enter the following command:
 
-"sh setup.sh [Your Discord Bot ID]"
+"sh setup.sh [Your Discord Bot ID]" (excluding square brackets)
 
 
 ## startup
