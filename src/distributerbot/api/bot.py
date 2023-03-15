@@ -21,7 +21,7 @@ NO_PERM = "Sorry, you don't have permission to use that comand"
 
 def is_bot(m):
     return m.author == bot.user
-
+'''
 @bot.event
 async def on_connect():
     view = View()
@@ -40,7 +40,42 @@ async def on_connect():
     guilds = bot.guilds
     
     for guild in guilds:
-        
+        print(guild.name)
+        for chat in chat_names:
+            channel = discord.utils.get(guild.text_channels, name=chat)
+            print(channel)
+            if isinstance(channel, discord.TextChannel):
+                try:
+                    await channel.purge(limit=10, check=is_bot)
+                except:
+                    print('failed to purge messages')
+                await channel.send('', view=view)
+                '''
+    # loop thru channel names in channel_name.txt
+    # get the guilds that this shard manages
+    # loop thru those guilds and try to find a server with the
+    # use discord.utils.get(guild.channels, name=)
+    # use chat_channel.get_history().flatten
+
+@bot.event
+async def on_ready():
+    view = View()
+    view.add_item(KeyClaimButton())
+    
+    chat_names = []
+    
+    try:
+        with open('claim_chats.txt', 'r') as chats:
+            chat_names = [name.strip('\n') for name in chats.readlines()]
+    except Exception as e:
+        print("Failed to open claim_chats")
+        print(e)
+        return
+    print(chat_names)
+    guilds = bot.guilds
+    
+    for guild in guilds:
+        print(guild.name)
         for chat in chat_names:
             channel = discord.utils.get(guild.text_channels, name=chat)
             print(channel)
@@ -51,14 +86,6 @@ async def on_connect():
                     print('failed to purge messages')
                 await channel.send('', view=view)
                 
-    # loop thru channel names in channel_name.txt
-    # get the guilds that this shard manages
-    # loop thru those guilds and try to find a server with the
-    # use discord.utils.get(guild.channels, name=)
-    # use chat_channel.get_history().flatten
-
-@bot.event
-async def on_ready():
     # set permissions
     bot.tree.get_command('setkey').checks = [has_auth_check]
     bot.tree.get_command('removekey').checks = [has_auth_check]
