@@ -7,7 +7,13 @@ if test -f "$file_name"; then
 fi
 
 # create environment vars file
+if test -f ""; then
+    rm "claim_chats.txt"
+fi
+
 touch $file_name
+
+touch "claim_chats.txt"
 
 echo "from os import environ" >> $file_name
 echo "" >> $file_name

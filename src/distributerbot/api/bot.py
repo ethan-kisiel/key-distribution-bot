@@ -3,6 +3,7 @@ import discord
 from discord import Permissions, Interaction
 from discord.ext.commands import Bot
 from discord.ui import View, Button, TextInput, Item
+from distributerbot.views.key_management_views import KeyClaimButton
 
 intents = discord.Intents.default()
 intents.members = True
@@ -15,9 +16,47 @@ bot = Bot(command_prefix=['!','.'], intents=intents)
 from distributerbot.utils import command_handler as ch
 from distributerbot.views.key_management_views import SetKeyModal, RemoveKeyModal
 from distributerbot.views.role_key_views import SetRoleKeys
+
 NO_PERM = "Sorry, you don't have permission to use that comand"
 
-# slash commands
+def is_bot(m):
+    return m.author == bot.user
+
+@bot.event
+async def on_connect():
+    view = View()
+    view.add_item(KeyClaimButton())
+    
+    chat_names = []
+    
+    try:
+        with open('claim_chats.txt', 'r') as chats:
+            chat_names = [name.strip('\n') for name in chats.readlines()]
+    except Exception as e:
+        print("Failed to open claim_chats")
+        print(e)
+        return
+    print(chat_names)
+    guilds = bot.guilds
+    
+    for guild in guilds:
+        
+        for chat in chat_names:
+            channel = discord.utils.get(guild.text_channels, name=chat)
+            print(channel)
+            if isinstance(channel, discord.TextChannel):
+                try:
+                    await channel.purge(limit=10, check=is_bot)
+                except:
+                    print('failed to purge messages')
+                await channel.send('', view=view)
+                
+    # loop thru channel names in channel_name.txt
+    # get the guilds that this shard manages
+    # loop thru those guilds and try to find a server with the
+    # use discord.utils.get(guild.channels, name=)
+    # use chat_channel.get_history().flatten
+
 @bot.event
 async def on_ready():
     # set permissions
@@ -52,7 +91,12 @@ async def deauth(ctx, user_id: int):
 async def getmyid(ctx):
     await ctx.reply(f'{ctx.author.id}', ephemeral=True)
 
-
+@bot.command(hidden=True)
+async def createbutton(ctx):
+    view = View()
+    btn = KeyClaimButton()
+    view.add_item(btn)
+    await ctx.send('', view=view)
 
 
 ## KEY MANAGEMENT
